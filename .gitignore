@@ -1,0 +1,23 @@
+# Go
+/bin/
+*.test
+*.out
+coverage.*
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Frontend
+web/node_modules/
+web/dist/
+web/dev-dist/
+web/test-results/
+web/playwright-report/
+
+# OS / editor
+.DS_Store
+*:Zone.Identifier
+.idea/
+.vscode/
