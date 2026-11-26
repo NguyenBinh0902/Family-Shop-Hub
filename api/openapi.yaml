@@ -1,0 +1,89 @@
+openapi: 3.0.3
+info:
+  title: FamilyShop Hub API
+  version: 0.1.0
+  description: |
+    API của FamilyShop Hub. Đây là hợp đồng giữa backend và frontend: sửa file
+    này trước, rồi chạy `make gen` để sinh code cho cả hai phía.
+
+    Mọi lỗi trả về dạng Problem Details (RFC 9457) với `Content-Type:
+    application/problem+json`. Lỗi nghiệp vụ có thêm `code` (ví dụ `BR-15`),
+    lỗi theo trường có `errors[]`.
+servers:
+  - url: /api/v1
+tags:
+  - name: system
+    description: Tình trạng hệ thống
+paths:
+  /healthz:
+    get:
+      operationId: getHealthz
+      tags: [system]
+      summary: Kiểm tra máy chủ và kết nối cơ sở dữ liệu
+      responses:
+        "200":
+          description: Máy chủ và cơ sở dữ liệu hoạt động bình thường
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+components:
+  responses:
+    ServiceUnavailable:
+      description: Máy chủ chưa sẵn sàng (ví dụ mất kết nối cơ sở dữ liệu)
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+  schemas:
+    Health:
+      type: object
+      required: [status, database]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        database:
+          type: string
+          enum: [ok]
+    Problem:
+      type: object
+      description: Problem Details (RFC 9457) kèm hai trường mở rộng `code` và `errors`.
+      required: [type, title, status]
+      properties:
+        type:
+          type: string
+          example: about:blank
+        title:
+          type: string
+          example: Xung đột dữ liệu
+        status:
+          type: integer
+          example: 409
+        detail:
+          type: string
+          description: Thông điệp tiếng Việt hiển thị cho người dùng.
+          example: Không đủ tồn kho
+        code:
+          type: string
+          description: Mã quy tắc nghiệp vụ (BR-xx) hoặc VALIDATION.
+          example: BR-13
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/FieldProblem"
+        requestId:
+          type: string
+          description: Mã request, khớp với log phía máy chủ.
+    FieldProblem:
+      type: object
+      required: [field, message]
+      properties:
+        field:
+          type: string
+          example: name
+        message:
+          type: string
+          example: Bắt buộc

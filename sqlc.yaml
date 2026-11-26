@@ -1,0 +1,24 @@
+# sqlc generates type-safe Go from the SQL in db/queries/<context>/, checked
+# against the schema built from db/migrations (goose Down sections are
+# ignored). Each context gets its own generated package so contexts never
+# share query code; add one entry per context as it is created.
+version: "2"
+sql:
+  - name: platform-health
+    engine: postgresql
+    schema: db/migrations
+    queries: db/queries/platform
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/platform/health/sqlcgen
+        sql_package: pgx/v5
+        overrides:
+          - db_type: uuid
+            go_type: github.com/google/uuid.UUID
+          - db_type: uuid
+            nullable: true
+            go_type:
+              import: github.com/google/uuid
+              type: UUID
+              pointer: true
