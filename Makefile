@@ -69,8 +69,14 @@ gen: web/node_modules ## Regenerate sqlc, oapi-codegen and the TypeScript client
 	$(GO_TOOL) oapi-codegen -config api/oapi-codegen.yaml api/openapi.yaml
 	cd web && npm run gen:api
 
+# Only generated paths are compared, so uncommitted hand-written changes do
+# not make the check fail locally.
+GENERATED := ':(glob)internal/**/sqlcgen/**' internal/platform/httpapi/httpapi.gen.go web/src/lib/api/schema.d.ts
+
 gen-check: gen ## Fail if generated code is out of date (used by CI)
-	git diff --exit-code -- internal web/src/lib/api
+	git diff --exit-code -- $(GENERATED)
+	@if [ -n "$$(git status --porcelain --untracked-files=all -- $(GENERATED))" ]; then \
+		echo "generated files are not committed:"; git status --short -- $(GENERATED); exit 1; fi
 
 # --- Database --------------------------------------------------------------
 

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
@@ -66,7 +65,7 @@ func TestFromError_CarriesFieldErrors(t *testing.T) {
 
 func TestMiddleware_RendersHandlerError(t *testing.T) {
 	r := gin.New()
-	r.Use(requestid.Middleware(), Middleware(slog.New(slog.NewTextHandler(io.Discard, nil))))
+	r.Use(requestid.Middleware(), Middleware(slog.New(slog.DiscardHandler)))
 	r.GET("/business", func(c *gin.Context) { _ = c.Error(errBR13) })
 	r.GET("/internal", func(c *gin.Context) {
 		_ = c.Error(errors.New("secret detail"))

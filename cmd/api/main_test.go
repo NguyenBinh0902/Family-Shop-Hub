@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
@@ -24,7 +23,7 @@ func TestMain(m *testing.M) {
 }
 
 func newTestEngine(pool *pgxpool.Pool) http.Handler {
-	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
+	logger := slog.New(slog.DiscardHandler)
 	return httpserver.NewEngine(logger, routes(newServer(pool, logger), logger))
 }
 

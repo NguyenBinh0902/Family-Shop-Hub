@@ -19,7 +19,6 @@ package dbtest
 import (
 	"context"
 	"fmt"
-	"io"
 	"log/slog"
 	"net/url"
 	"os"
@@ -169,7 +168,7 @@ func migrate(ctx context.Context, dsn string) error {
 	// connected to the template.
 	defer func() { _ = sqlDB.Close() }()
 
-	p, err := migrations.NewProvider(sqlDB, goose.WithSlog(slog.New(slog.NewTextHandler(io.Discard, nil))))
+	p, err := migrations.NewProvider(sqlDB, goose.WithSlog(slog.New(slog.DiscardHandler)))
 	if err != nil {
 		return err
 	}

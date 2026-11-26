@@ -21,7 +21,7 @@ import (
 
 func init() { gin.SetMode(gin.TestMode) }
 
-func discardLogger() *slog.Logger { return slog.New(slog.NewTextHandler(io.Discard, nil)) }
+func discardLogger() *slog.Logger { return slog.New(slog.DiscardHandler) }
 
 func TestEngine_RequestID(t *testing.T) {
 	r := NewEngine(discardLogger(), func(r *gin.Engine) {

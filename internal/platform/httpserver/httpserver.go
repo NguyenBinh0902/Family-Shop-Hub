@@ -87,7 +87,7 @@ func (s *Server) Run(ctx context.Context, shutdownTimeout time.Duration) error {
 // and waits up to shutdownTimeout for in-flight requests to finish. Taking a
 // listener lets tests use a random free port.
 func (s *Server) Serve(ctx context.Context, ln net.Listener, shutdownTimeout time.Duration) error {
-	s.logger.Info("http server listening", slog.String("addr", ln.Addr().String()))
+	s.logger.InfoContext(ctx, "http server listening", slog.String("addr", ln.Addr().String()))
 
 	serveErr := make(chan error, 1)
 	go func() { serveErr <- s.srv.Serve(ln) }()
@@ -98,7 +98,7 @@ func (s *Server) Serve(ctx context.Context, ln net.Listener, shutdownTimeout tim
 	case <-ctx.Done():
 	}
 
-	s.logger.Info("http server shutting down", slog.Duration("timeout", shutdownTimeout))
+	s.logger.InfoContext(ctx, "http server shutting down", slog.Duration("timeout", shutdownTimeout))
 	// The parent ctx is already cancelled, so shutdown needs a fresh one.
 	shutdownCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), shutdownTimeout)
 	defer cancel()
@@ -108,7 +108,7 @@ func (s *Server) Serve(ctx context.Context, ln net.Listener, shutdownTimeout tim
 	if err := <-serveErr; !errors.Is(err, http.ErrServerClosed) {
 		return fmt.Errorf("serve: %w", err)
 	}
-	s.logger.Info("http server stopped")
+	s.logger.InfoContext(shutdownCtx, "http server stopped")
 	return nil
 }
 

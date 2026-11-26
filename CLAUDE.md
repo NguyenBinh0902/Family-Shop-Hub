@@ -37,7 +37,21 @@ docs/               tài liệu nghiệp vụ, ADR, quy ước
 
 ## Lệnh
 
-Định nghĩa trong `Makefile` khi scaffold. Mục tiêu dự kiến: `make dev`, `make test`, `make lint`, `make gen` (sqlc, oapi-codegen, client TypeScript), `make migrate-up`. Cập nhật mục này khi lệnh thật đã có.
+Chạy `make help` để xem đủ danh sách. Cần Go 1.27, Node 22, Docker (test tích hợp dùng testcontainers).
+
+| Lệnh | Việc |
+| --- | --- |
+| `make dev` | Chạy cả hệ thống bằng Docker Compose tại http://localhost:8080 (tự tạo `.env` từ `.env.example`) |
+| `make dev-db` rồi `make dev-api` + `make dev-web` | Phát triển nhanh: Postgres trong Docker, API chạy trên máy (cổng 8081), Vite hot reload proxy `/api` |
+| `make test` | `go test -race ./...` (gồm test tích hợp với Postgres thật) và typecheck frontend |
+| `go test -short ./...` | Chỉ unit test, bỏ qua test cần Docker |
+| `make lint` | `go vet`, `golangci-lint` (có depguard chặn `domain` import hạ tầng), ESLint, Prettier |
+| `make gen` | Sinh lại code sqlc, oapi-codegen và client TypeScript sau khi sửa `db/queries/` hoặc `api/openapi.yaml` |
+| `make gen-check` | Báo lỗi nếu code sinh ra chưa khớp (CI chạy lệnh này) |
+| `make migrate-new name=add_products` | Tạo `db/migrations/NNNN_add_products.sql` |
+| `make migrate-up` / `migrate-down` / `migrate-status` | Áp dụng, lùi, xem migration trên DB dev |
+
+Công cụ sinh code được pin trong `tools/go.mod`, gọi qua `go tool -modfile=tools/go.mod`.
 
 ## Luật không được vi phạm
 
