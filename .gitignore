@@ -1,8 +1,17 @@
 # Go
 /bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
 *.test
 *.out
+*.coverprofile
 coverage.*
+profile.cov
+go.work
+go.work.sum
 
 # Env
 .env
