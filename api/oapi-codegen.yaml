@@ -1,0 +1,9 @@
+# Generates Go types and a Gin "strict" server interface from openapi.yaml.
+# Strict handlers receive a typed request object and return a typed response
+# object, so handlers never touch JSON encoding or status codes by hand.
+package: httpapi
+output: internal/platform/httpapi/httpapi.gen.go
+generate:
+  models: true
+  gin-server: true
+  strict-server: true

@@ -25,4 +25,6 @@ Chủ repo làm backend, không chuyên frontend. Agent tự quyết chi tiết 
 
 ## Lệnh
 
-Chạy qua `Makefile` ở gốc repo (`make dev`, `make lint`, `make test`, `make gen`). Cập nhật mục này khi có lệnh riêng cho frontend.
+Chạy qua `Makefile` ở gốc repo: `make dev-web` (Vite hot reload, cần `make dev-db` và `make dev-api`), `make lint-web`, `make test-web`, `make gen` (sinh lại `src/lib/api/schema.d.ts`). Trong `web/`: `npm run lint`, `npm run typecheck`, `npm run build`, `npm run format`.
+
+TypeScript pin ở 5.9 vì `openapi-typescript` và `typescript-eslint` chưa hỗ trợ TypeScript 7.

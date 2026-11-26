@@ -65,7 +65,7 @@ BR-28 đến BR-37 là quy tắc BA bổ sung khi chi tiết hóa cho developer.
 | BR-19 | Bán nợ bắt buộc gắn khách hàng. |
 | BR-29 | Bút toán đảo ghi nhận vào ngày hủy; không sửa số liệu của ngày bán. |
 | BR-30 | Tiền cọc không phải doanh thu; chỉ thành doanh thu khi được trừ vào một đơn bán hoàn tất. |
-| BR-33 | Phép tính tiền có phần lẻ (giảm giá theo %, giá vốn bình quân, giá trị nguyên liệu) làm tròn tới đồng, nửa đồng làm tròn lên. |
+| BR-33 | Phép tính tiền có phần lẻ (giảm giá theo %, giá vốn bình quân, giá trị nguyên liệu) làm tròn tới đồng, nửa đồng làm tròn lên. Với số âm (bút toán đảo, điều chỉnh) làm tròn ra xa số 0 (−2,5 → −3) để bút toán đảo luôn bằng đúng số đối của bút toán gốc (`kernel.DivRound`). |
 | BR-35 | Đơn mở (`OPEN`, chỉ có ở cửa hàng có `fnb.table`) được sửa tự do; chỉ khi hoàn tất mới trừ kho, ghi doanh thu, và trở thành bất biến. |
 
 ## Khách hàng và công nợ

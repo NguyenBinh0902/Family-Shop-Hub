@@ -53,10 +53,10 @@ const (
 
 ## 4. Lỗi
 
-- Lỗi nghiệp vụ khai báo trong `domain`, kèm mã BR:
+- Lỗi nghiệp vụ khai báo trong `domain` của từng context, là giá trị kiểu `kernel.Error` (dùng chung để `platform/problem` nhận ra), kèm mã BR và `Kind` quyết định mã HTTP (`Invalid` 422, `Conflict` 409, `Forbidden` 403, `NotFound` 404):
 
 ```go
-var ErrOrderImmutable = &domain.Error{Code: "BR-15", Message: "Đơn đã hoàn tất, không thể sửa"}
+var ErrOrderImmutable = &kernel.Error{Code: "BR-15", Kind: kernel.ErrorKindConflict, Message: "Đơn đã hoàn tất, không thể sửa"}
 ```
 
 - Bọc lỗi bằng `fmt.Errorf("load order %s: %w", id, err)`; kiểm tra bằng `errors.Is` / `errors.As`. Không so sánh chuỗi lỗi.
@@ -76,9 +76,11 @@ var ErrOrderImmutable = &domain.Error{Code: "BR-15", Message: "Đơn đã hoàn 
 
 ```go
 type TxRunner interface {
-	InTx(ctx context.Context, fn func(ctx context.Context, repos Repos) error) error
+	InTx(ctx context.Context, householdID uuid.UUID, fn func(ctx context.Context, repos Repos) error) error
 }
 ```
+
+- `Repos` là struct các port mà use case cần, kể cả port sang context khác; `main.go` dựng tất cả từ cùng một `pgx.Tx`. `*db.TxRunner[Repos]` hiện thực interface này và đặt `app.household_id` cho RLS. Chi tiết và lý do ở ADR-0004.
 
 - Repository không tự mở transaction.
 

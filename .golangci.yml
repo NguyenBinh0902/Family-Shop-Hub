@@ -1,0 +1,91 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  # errcheck, govet, ineffassign, staticcheck, unused
+  default: standard
+  enable:
+    - bodyclose # HTTP response bodies are closed
+    - depguard # enforces the dependency rule of backend-go.md §2
+    - errorlint # errors.Is/As instead of == and type assertions on wrapped errors
+    - misspell
+    - noctx # HTTP requests and DB calls carry a context
+    - nolintlint # every //nolint names a linter and is still needed
+    - revive # doc comments on exported identifiers, naming
+    - sloglint # consistent log/slog usage
+    - unconvert
+  settings:
+    depguard:
+      rules:
+        # adapter → app → domain → kernel. Domain code is pure business logic:
+        # standard library and kernel only.
+        domain:
+          files:
+            - "**/internal/*/domain/**"
+          deny:
+            - pkg: github.com/gin-gonic/gin
+              desc: domain must not depend on HTTP (backend-go.md §2)
+            - pkg: net/http
+              desc: domain must not depend on HTTP (backend-go.md §2)
+            - pkg: github.com/jackc/pgx
+              desc: domain must not depend on the database (backend-go.md §2)
+            - pkg: familyshop-hub/internal/platform
+              desc: domain may only import kernel (backend-go.md §2)
+        # The kernel is shared by every layer, so it must not pull in
+        # infrastructure either.
+        kernel:
+          files:
+            - "**/internal/kernel/**"
+          deny:
+            - pkg: github.com/gin-gonic/gin
+              desc: kernel is imported by domain code
+            - pkg: github.com/jackc/pgx
+              desc: kernel is imported by domain code
+            - pkg: familyshop-hub/internal/platform
+              desc: kernel is imported by domain code
+    revive:
+      rules:
+        - name: exported
+        - name: package-comments
+        - name: var-naming
+        - name: error-strings
+        - name: error-naming
+        - name: receiver-naming
+        - name: context-as-argument
+        - name: indent-error-flow
+    sloglint:
+      kv-only: false
+      attr-only: false
+      no-global: all
+      context: scope
+    nolintlint:
+      require-specific: true
+      require-explanation: true
+  exclusions:
+    generated: strict
+    presets:
+      - std-error-handling
+    paths:
+      # npm packages may ship Go files; they are not ours.
+      - web
+    rules:
+      # Tests may build requests and listeners without a context.
+      - path: _test\.go
+        linters: [noctx]
+      # Test files do not need doc comments.
+      - path: _test\.go
+        linters: [revive]
+        text: "exported"
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - familyshop-hub
+  exclusions:
+    generated: strict

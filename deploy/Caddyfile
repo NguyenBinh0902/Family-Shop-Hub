@@ -1,0 +1,27 @@
+# Local and single-VPS setup. In production, replace ":8080" with the domain
+# name and remove auto_https off so Caddy obtains a certificate (ADR-0001).
+{
+	admin off
+	auto_https off
+}
+
+:8080 {
+	encode zstd gzip
+
+	handle /api/* {
+		reverse_proxy api:8080
+	}
+
+	handle {
+		root * /srv
+		# Hashed build assets never change, so browsers may cache them forever.
+		header /assets/* Cache-Control "public, max-age=31536000, immutable"
+		# The service worker and HTML must always be revalidated, or users
+		# keep running an old version of the app.
+		header /sw.js Cache-Control "no-cache"
+		header /index.html Cache-Control "no-cache"
+		# SPA: unknown paths get index.html and React Router handles them.
+		try_files {path} /index.html
+		file_server
+	}
+}

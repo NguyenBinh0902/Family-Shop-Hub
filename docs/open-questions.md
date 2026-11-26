@@ -28,7 +28,7 @@ Các mục dưới đây đã được viết vào tài liệu và **được á
 | Giá vốn khi tồn âm hoặc chưa có giá vốn | BR-28 | rules.md |
 | Ngày ghi nhận bút toán đảo | Ngày hủy (BR-29) | rules.md |
 | Tiền cọc, thu nợ, trả nhà cung cấp | Không phải doanh thu / chi phí vận hành (BR-30, BR-31, BR-32) | rules.md |
-| Làm tròn tiền | Tới đồng, nửa lên (BR-33) | rules.md |
+| Làm tròn tiền | Tới đồng, nửa lên; số âm làm tròn ra xa số 0 (chủ repo chốt 25/11/2026) (BR-33) | rules.md |
 | Đăng ký không xác minh SĐT bằng OTP | Chấp nhận trong MVP vì chưa có nhà cung cấp SMS | UC-01 |
 | Mời thành viên | Bằng đường link có mã, Chủ hộ tự gửi qua Zalo; hạn 7 ngày, dùng một lần | UC-03 |
 | Phiên đăng nhập | Hết hạn sau 30 ngày không dùng | UC-02 |
